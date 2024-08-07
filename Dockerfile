@@ -1,7 +1,7 @@
 FROM nginx:alpine
 
 # Создаем пользователя nginxuser с UID 1001
-RUN adduser -D -u 1001 nginxuser
+RUN useradd -M -u 1001 nginxuser
 
 USER root
 RUN mkdir -p /var/run/nginx && touch /var/run/nginx/nginx.pid &&  chmod -R 644 /var/run/nginx && \
