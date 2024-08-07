@@ -1,0 +1,61 @@
+replicaCount: 1
+
+image:
+  repository: olejean/nginx-app
+  tag: "1.0.19"
+  pullPolicy: IfNotPresent
+
+service:
+  name: nginx-app
+  type: ClusterIP
+  port: 80
+  targetPort: 8000
+
+readinessProbe:
+  httpGet:
+    path: /test.html
+    port: 8000
+  initialDelaySeconds: 5
+  periodSeconds: 5
+
+livenessProbe:
+  httpGet:
+    path: /test.html
+    port: 8000
+  initialDelaySeconds: 15
+  periodSeconds: 20
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: "nginx-app-sa"
+
+resources:
+  requests:
+    memory: "64Mi"
+    cpu: "250m"
+  limits:
+    memory: "128Mi"
+    cpu: "500m"
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+serviceAccount:
+  name: default
+
+role:
+  name: nginx-app-role
+
+roleBinding:
+  name: nginx-app-rolebinding
+  

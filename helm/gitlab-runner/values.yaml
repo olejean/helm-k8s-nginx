@@ -1,0 +1,41 @@
+# GitLab Runner configuration values
+
+# GitLab URL
+gitlabUrl: https://gitlab.com/
+
+#  token for the runner
+runnerToken: ""
+
+
+# Configure runner pods to have a specific service account
+rbac:
+  create: true
+  generatedServiceAccountName: ""  
+    #runners:
+    # secret: gitlab-runner-secret
+
+
+ 
+# Pod labels
+#podLabels:
+#  environment: "ci"
+#  team: "devops"
+
+# Specify the runner pod's nodeSelector
+nodeSelector: {}
+
+# Specify the runner pod's affinity
+affinity: {}
+
+# Specify the runner pod's tolerations
+tolerations: []
+
+# Resources for the runner manager
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 200m
+    memory: 256Mi
+

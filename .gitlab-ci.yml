@@ -1,0 +1,49 @@
+
+
+variables:
+  DOCKER_TLS_CERTDIR: ""
+  
+  
+  #KUBECONFIG: /builds/$CI_PROJECT_PATH/.kube/config
+
+stages:
+  - build
+  - deploy
+
+  
+  
+  #- echo $KUBE_CONFIG | base64 -d > ~/.kube/config
+
+build:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:v1.23.2-debug
+    entrypoint: [""]
+  script:
+    
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${DOCKER_USERNAME}" "${DOCKER_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    
+    
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG}"
+
+  rules:
+    - if: $CI_COMMIT_TAG
+
+deploy:
+  stage: deploy
+  image: 
+    name: dtzar/helm-kubectl:3.15.3  # Образ для Helm и kubectl
+  script:
+
+    - helm upgrade --install nginx-app ./helm/ --namespace default --set image.repository=$CI_REGISTRY_IMAGE --set image.tag=$CI_COMMIT_REF_NAME   --set appVersion=$CI_COMMIT_TAG 
+  only:
+    - tags
+
+   
+
+
+
